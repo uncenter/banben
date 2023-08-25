@@ -14,8 +14,8 @@
 		"dist/"
 	],
 	"type": "module",
-	"exports": "./dist/index.mjs",
-	"bin": "dist/index.mjs",
+	"exports": "./dist/bin.mjs",
+	"bin": "dist/bin.mjs",
 	"scripts": {
 		"build": "unbuild",
 		"lint": "eslint --fix --ext .ts src",
@@ -24,7 +24,7 @@
 	"dependencies": {
 		"json-parse-even-better-errors": "^3.0.0",
 		"loogu": "^0.2.0",
-		"prask": "^1.5.2",
+		"prask": "^1.5.4",
 		"semver": "^7.5.4",
 		"tiny-bin": "^1.4.2"
 	},
