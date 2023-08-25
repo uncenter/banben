@@ -107,8 +107,9 @@ export default async function (version: ReleaseType | string | undefined) {
 					'tag',
 					'-a',
 					`v${pkgJson.version}`,
-					hash.stdout,
+					JSON.parse(hash.stdout || '""'),
 					'-m',
+					'""',
 				]);
 			} catch {
 				log.error('Something went wrong while creating the tag.');
