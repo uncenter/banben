@@ -1,10 +1,11 @@
 import { resolve } from 'node:path';
-import { execSync } from 'node:child_process';
 
 import { ReleaseType } from 'semver';
 import semverIncrement from 'semver/functions/inc.js';
 import semverValid from 'semver/functions/valid.js';
 import semverParse from 'semver/functions/parse.js';
+
+import { execa } from 'execa';
 
 import { toggle, string, select } from 'prask';
 
@@ -29,12 +30,12 @@ export default async function (version: ReleaseType | string | undefined) {
 		if (!version) {
 			version = await string({
 				message: 'Enter a version number:',
-				validate: (value) => {
-					if (value.length === 0) return 'Please provide a value.';
-					if (!semverValid(value))
-						return 'Value must be a valid semver version!';
-					return true;
-				},
+				validate: (value) =>
+					!value
+						? 'Please provide a value.'
+						: !semverValid(value)
+						? 'Value must be a valid semver version!'
+						: true,
 			});
 		}
 	}
@@ -65,7 +66,6 @@ export default async function (version: ReleaseType | string | undefined) {
 		})
 	) {
 		await writeJson(pkgJsonPath, pkgJson);
-		log.success(`Version written to package.json.`);
 	}
 
 	if (
@@ -74,16 +74,20 @@ export default async function (version: ReleaseType | string | undefined) {
 			initial: true,
 		})
 	) {
-		const versionString = await string({
-			message: 'Commit message:',
-			initial: `v${pkgJson.version}`,
-			required: true,
-			validate: (value) =>
-				value.length > 0 || 'Please provide a commit message.',
-		});
-		execSync(`git add ${pkgJsonPath}`);
-		execSync(`git commit -m "${versionString}"`);
-		log.success(`Committed version changes.`);
+		try {
+			await execa('git', ['add', '.']);
+			await execa('git', [
+				'commit',
+				'-m',
+				`"${await string({
+					message: 'Commit message:',
+					initial: `v${pkgJson.version}`,
+					validate: (value) => !!value || 'Please provide a commit message.',
+				})}"`,
+			]);
+		} catch {
+			log.error('Something went wrong while making the commit.');
+		}
 
 		if (
 			await toggle({
@@ -91,8 +95,24 @@ export default async function (version: ReleaseType | string | undefined) {
 				initial: true,
 			})
 		) {
-			const commit = execSync(`git log -n 1 --pretty=format:"%H"`);
-			execSync(`git tag -a ${versionString} ${commit} -m ""`);
+			try {
+				const hash = await execa('git', [
+					'log',
+					'-n',
+					'1',
+					'--pretty=format:"%H"',
+				]);
+
+				await execa('git', [
+					'tag',
+					'-a',
+					`v${pkgJson.version}`,
+					hash.stdout,
+					'-m',
+				]);
+			} catch {
+				log.error('Something went wrong while creating the tag.');
+			}
 		}
 	}
 }
