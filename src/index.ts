@@ -74,17 +74,15 @@ export default async function (version: ReleaseType | string | undefined) {
 			initial: true,
 		})
 	) {
+		const commitMessage = await string({
+			message: 'Commit message:',
+			initial: `v${pkgJson.version}`,
+			validate: (value) => !!value || 'Please provide a commit message.',
+		});
+
 		try {
 			await execa('git', ['add', '.']);
-			await execa('git', [
-				'commit',
-				'-m',
-				`"${await string({
-					message: 'Commit message:',
-					initial: `v${pkgJson.version}`,
-					validate: (value) => !!value || 'Please provide a commit message.',
-				})}"`,
-			]);
+			await execa('git', ['commit', '-m', commitMessage]);
 		} catch {
 			log.error('Something went wrong while making the commit.');
 		}
@@ -96,7 +94,7 @@ export default async function (version: ReleaseType | string | undefined) {
 			})
 		) {
 			try {
-				const hash = await execa('git', [
+				const commitHash = await execa('git', [
 					'log',
 					'-n',
 					'1',
@@ -107,7 +105,7 @@ export default async function (version: ReleaseType | string | undefined) {
 					'tag',
 					'-a',
 					`v${pkgJson.version}`,
-					JSON.parse(hash.stdout || '""'),
+					JSON.parse(commitHash.stdout || '""'),
 					'-m',
 					'""',
 				]);
