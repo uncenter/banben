@@ -1,8 +1,8 @@
 {
 	"name": "banben",
 	"version": "0.1.0",
-	"description": "",
-	"author": "uncenter (https://uncenter.dev)",
+	"description": "A better `npm version`.",
+	"author": "uncenter <hi@uncenter.dev>",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/uncenter/banben.git"
@@ -24,6 +24,7 @@
 	"dependencies": {
 		"json-parse-even-better-errors": "^3.0.0",
 		"loogu": "^0.2.0",
+		"prask": "^1.5.2",
 		"semver": "^7.5.4",
 		"tiny-bin": "^1.4.2"
 	},
