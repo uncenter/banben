@@ -29,9 +29,12 @@ export default async function (version: ReleaseType | string | undefined) {
 		if (!version) {
 			version = await string({
 				message: 'Enter a version number:',
-				required: true,
-				validate: (value) =>
-					semverValid(value) || 'Value must be a valid semver version!',
+				validate: (value) => {
+					if (value.length === 0) return 'Please provide a value.';
+					if (!semverValid(value))
+						return 'Value must be a valid semver version!';
+					return true;
+				},
 			});
 		}
 	}
