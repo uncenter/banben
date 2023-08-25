@@ -1,4 +1,3 @@
-import { PackageJson } from 'pkg-types';
 import { resolve } from 'node:path';
 
 import { ReleaseType } from 'semver';
@@ -11,7 +10,7 @@ import { writeJson, readJson } from './utils';
 
 export default async function (version: ReleaseType | string) {
 	const pkgJsonPath = resolve('./package.json');
-	const pkgJson = (await readJson(pkgJsonPath)) as PackageJson;
+	const pkgJson = await readJson(pkgJsonPath);
 
 	if (
 		[

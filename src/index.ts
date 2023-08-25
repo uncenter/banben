@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 
-import { bin } from 'specialist';
-import { Logger } from 'loogu';
+import bin from 'tiny-bin';
 
 import bump from './bump';
+
+import { Logger } from 'loogu';
 export const log = new Logger('', { throwError: false });
 
-bin('bulto', '')
+bin('banben', '')
 	.action(() => {
-		log.info('Hello, world!');
+		log.error(
+			'No command specified. Run `banben help [command]` or `banben --help`.',
+		);
 	})
 	.command('bump', 'Bump the package.json version')
 	.argument(
