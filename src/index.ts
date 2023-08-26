@@ -39,6 +39,7 @@ export default async function (version: ReleaseType | string | undefined) {
 			});
 		}
 	}
+
 	const pkgJsonPath = resolve('./package.json');
 	const pkgJson = await readJson(pkgJsonPath);
 
@@ -66,51 +67,56 @@ export default async function (version: ReleaseType | string | undefined) {
 		})
 	) {
 		await writeJson(pkgJsonPath, pkgJson);
-	}
-
-	if (
-		await toggle({
-			message: `Commit version '${pkgJson.version}'?`,
-			initial: true,
-		})
-	) {
-		const commitMessage = await string({
-			message: 'Commit message:',
-			initial: `v${pkgJson.version}`,
-			validate: (value) => !!value || 'Please provide a commit message.',
-		});
-
-		try {
-			await execa('git', ['add', '.']);
-			await execa('git', ['commit', '-m', commitMessage]);
-		} catch {
-			log.error('Something went wrong while making the commit.');
-		}
 
 		if (
 			await toggle({
-				message: 'Create tag?',
+				message: `Commit version '${pkgJson.version}'?`,
 				initial: true,
 			})
 		) {
-			try {
-				const commitHash = await execa('git', [
-					'log',
-					'-n',
-					'1',
-					'--pretty=format:"%H"',
-				]);
+			const commitMsg = await string({
+				message: 'Commit message:',
+				initial: `v${pkgJson.version}`,
+				validate: (value) => !!value || 'Please provide a commit message.',
+			});
+			if (!commitMsg) log.error('Commit cancelled.');
 
-				await execa('git', [
-					'tag',
-					'-a',
-					`v${pkgJson.version}`,
-					JSON.parse(commitHash.stdout || '""'),
-					'-m',
-					'""',
-				]);
+			try {
+				await execa('git', ['add', '.']);
+				await execa('git', ['commit', '-m', commitMsg]);
 			} catch {
-				log.error('Something went wrong while creating the tag.');
+				log.error('Something went wrong while making the commit.');
+			}
+
+			if (
+				await toggle({
+					message: 'Create tag?',
+					initial: true,
+				})
+			) {
+				try {
+					const commitHash = JSON.parse(
+						(await execa('git', [
+							'log',
+							'-n',
+							'1',
+							'--pretty=format:"%H"',
+						]).then((result) => result.stdout)) || '""',
+					);
+
+					if (!commitHash) log.error('No commit hash found!');
+
+					await execa('git', [
+						'tag',
+						'-a',
+						`v${pkgJson.version}`,
+						commitHash,
+						'-m',
+						'""',
+					]);
+				} catch {
+					log.error('Something went wrong while creating the tag.');
+				}
 			}
 		}
 	}
