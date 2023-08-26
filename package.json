@@ -25,7 +25,7 @@
 		"execa": "^8.0.1",
 		"json-parse-even-better-errors": "^3.0.0",
 		"loogu": "^0.2.0",
-		"prask": "^1.5.4",
+		"prask": "^2.0.0",
 		"semver": "^7.5.4",
 		"tiny-bin": "^1.4.2"
 	},

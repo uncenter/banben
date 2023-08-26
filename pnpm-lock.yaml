@@ -15,8 +15,8 @@ dependencies:
     specifier: ^0.2.0
     version: 0.2.0
   prask:
-    specifier: ^1.5.4
-    version: 1.5.4
+    specifier: ^2.0.0
+    version: 2.0.0
   semver:
     specifier: ^7.5.4
     version: 7.5.4
@@ -1085,6 +1085,10 @@ packages:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
     dev: true
 
+  /function-once@3.0.0:
+    resolution: {integrity: sha512-WEhgu9PE55sHFf+SBg3lI8+CWpsqReLcsp3g12XhwSJJgnodpSpHk6StvpeVcKuHAFCAdttLrslJRFDSdLDf4g==}
+    dev: false
+
   /gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -1442,11 +1446,13 @@ packages:
       pathe: 1.1.1
     dev: true
 
-  /prask@1.5.4:
-    resolution: {integrity: sha512-5XGFFHxayIDSQNB2x1L5Dd8Cr9q3kVjbL19iApP8APnfit+aV73aBQri7AUF76Sh84Q+8EkGPX5bAeS0+dZYFQ==}
+  /prask@2.0.0:
+    resolution: {integrity: sha512-iZ+KpNDYGQm8st7dMyZ5/efmfTTOlvnNYKRtdzh5RXlVeBZW17csTn12zycn9uYesuE82eh9I4y6OrmMJ+1Tzg==}
     dependencies:
+      ansi-purge: 1.0.0
+      function-once: 3.0.0
       promise-make-naked: 2.1.1
-      tiny-colors: 2.1.0
+      tiny-colors: 2.1.2
       tiny-cursor: 2.0.0
       tiny-spinner: 2.0.3
     dev: false
