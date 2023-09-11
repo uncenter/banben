@@ -22,8 +22,8 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
+		"detect-indent": "^7.0.1",
 		"execa": "^8.0.1",
-		"json-parse-even-better-errors": "^3.0.0",
 		"loogu": "^0.2.0",
 		"prask": "^2.0.0",
 		"semver": "^7.5.4",
@@ -34,5 +34,5 @@
 		"@types/semver": "^7.5.0",
 		"unbuild": "^2.0.0"
 	},
-	"packageManager": "pnpm@8.6.12"
+	"packageManager": "pnpm@8.7.5"
 }

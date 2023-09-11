@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import bin from 'tiny-bin';
-
 import bump from '.';
 
 import { Logger } from 'loogu';
+
 export const log = new Logger('', {
 	throwError: false,
 });

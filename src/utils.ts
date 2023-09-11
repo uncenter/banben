@@ -1,17 +1,32 @@
-import { writeFile, readFile } from 'fs/promises';
+import detectIndent, { type Indent } from 'detect-indent';
+import { readFile, writeFile } from 'fs/promises';
+import type { JsonObject } from './types';
 
-import parse from 'json-parse-even-better-errors';
+export class Package {
+	path: string;
+	json: JsonObject;
 
-const kIndent = Symbol.for('indent');
-const kNewline = Symbol.for('newline');
+	indent: Indent['indent'];
+	eofChar: string;
 
-export async function writeJson(path: string, pkg: any) {
-	const { [kIndent]: indent = 2, [kNewline]: newline = '\n' } = pkg;
-	const raw = JSON.stringify(pkg, null, indent) + '\n';
-	const data = newline === '\n' ? raw : raw.split('\n').join(newline);
-	return await writeFile(path, data);
-}
+	constructor(path: string) {
+		this.path = path;
+	}
 
-export async function readJson(path: string) {
-	return parse(await readFile(path));
+	async read() {
+		if (this.json) return this.json;
+
+		const file = await readFile(this.path, 'utf-8');
+		this.indent = detectIndent(file).indent;
+		this.eofChar = (file.match(/\r?\n$/) || [])[0] || '';
+		this.json = JSON.parse(file);
+		return this.json;
+	}
+
+	async write(json: typeof this.json) {
+		await writeFile(
+			this.path,
+			JSON.stringify(json || this.json, undefined, this.indent) + this.eofChar,
+		);
+	}
 }
