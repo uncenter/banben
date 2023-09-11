@@ -18,7 +18,6 @@
 	"bin": "dist/bin.mjs",
 	"scripts": {
 		"build": "unbuild",
-		"lint": "eslint --fix --ext .ts src",
 		"format": "prettier --write ."
 	},
 	"dependencies": {
