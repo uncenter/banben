@@ -8,6 +8,11 @@ import { inc, parse, valid, type ReleaseType } from 'semver';
 import { Package } from './utils';
 
 export default async function (version: ReleaseType | string | undefined) {
+	const pkg = new Package(resolve('./package.json'));
+	const json = await pkg.read();
+
+	log.info(`Current version is ${json.version}.`);
+
 	if (version === undefined) {
 		version = await select({
 			message: 'Select a version increment:',
@@ -35,9 +40,6 @@ export default async function (version: ReleaseType | string | undefined) {
 		}
 	}
 
-	const pkg = new Package(resolve('./package.json'));
-	const json = await pkg.read();
-
 	if (
 		[
 			'major',
@@ -62,57 +64,56 @@ export default async function (version: ReleaseType | string | undefined) {
 		})
 	) {
 		await pkg.write(json);
+		log.success('Wrote version to package.json.');
+	} else {
+		log.error('Version write cancelled.');
+	}
 
-		if (
-			await toggle({
-				message: `Commit version '${json.version}'?`,
-				initial: true,
-			})
-		) {
-			const commitMsg = await string({
-				message: 'Commit message:',
-				initial: `v${json.version}`,
-				validate: (value) => !!value || 'Please provide a commit message.',
-			});
-			if (!commitMsg) log.error('Commit cancelled.');
+	if (
+		await toggle({
+			message: `Commit version '${json.version}'?`,
+			initial: true,
+		})
+	) {
+		const message = await string({
+			message: 'Commit message:',
+			initial: `v${json.version}`,
+			validate: (value) => !!value || 'Please provide a commit message.',
+		});
+		if (!message) log.error('Commit cancelled.');
 
-			try {
-				await shell('git', ['add', '.']);
-				await shell('git', ['commit', '-m', commitMsg]);
-			} catch {
-				log.error('Something went wrong while making the commit.');
-			}
-
-			if (
-				await toggle({
-					message: 'Create tag?',
-					initial: true,
-				})
-			) {
-				try {
-					const commitHash = JSON.parse(
-						(await shell('git', [
-							'log',
-							'-n',
-							'1',
-							'--pretty=format:"%H"',
-						]).then((result) => result.stdout)) || '""',
-					);
-
-					if (!commitHash) log.error('No commit hash found!');
-
-					await shell('git', [
-						'tag',
-						'-a',
-						`v${json.version}`,
-						commitHash,
-						'-m',
-						'""',
-					]);
-				} catch {
-					log.error('Something went wrong while creating the tag.');
-				}
-			}
+		try {
+			await shell('git', ['add', '.']);
+			await shell('git', ['commit', '-m', message]);
+		} catch {
+			log.error('Something went wrong while making the commit.');
 		}
+		log.success('Commit created.');
+	} else {
+		log.error('Commit cancelled.');
+	}
+
+	if (
+		await toggle({
+			message: 'Create tag?',
+			initial: true,
+		})
+	) {
+		try {
+			const hash = JSON.parse(
+				(await shell('git', ['log', '-n', '1', '--pretty=format:"%H"']).then(
+					(result) => result.stdout,
+				)) || '""',
+			);
+
+			if (!hash) log.error('No commit hash found!');
+
+			await shell('git', ['tag', '-a', `v${json.version}`, hash, '-m', '""']);
+		} catch {
+			log.error('Something went wrong while creating the tag.');
+		}
+		log.success('Tag created.');
+	} else {
+		log.error('Tag creation cancelled.');
 	}
 }
