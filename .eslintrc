@@ -1,0 +1,20 @@
+{
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint", "unicorn"],
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:unicorn/recommended",
+		"prettier"
+	],
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"rules": {
+		"unicorn/no-useless-undefined": ["error", { "checkArguments": false }],
+		"unicorn/text-encoding-identifier-case": 0,
+		"unicorn/prevent-abbreviations": 0
+	}
+}

@@ -1,5 +1,5 @@
 import detectIndent, { type Indent } from 'detect-indent';
-import { readFile, stat, writeFile } from 'fs/promises';
+import { readFile, stat, writeFile } from 'node:fs/promises';
 import { log } from './bin';
 import type { JsonObject } from './types';
 
@@ -37,7 +37,8 @@ export class Package {
 	async write(json: typeof this.json) {
 		await writeFile(
 			this.path,
-			JSON.stringify(json || this.json, undefined, this.indent) + this.eofChar,
+			JSON.stringify(json || this.json, undefined, this.indent) +
+				this.eofChar,
 		);
 	}
 }

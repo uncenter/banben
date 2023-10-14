@@ -31,11 +31,11 @@ export default async function (version: ReleaseType | string | undefined) {
 			version = await string({
 				message: 'Enter a version number:',
 				validate: (value) =>
-					!value
-						? 'Please provide a value.'
-						: !valid(value)
-						? 'Value must be a valid semver version!'
-						: true,
+					value
+						? valid(value)
+							? true
+							: 'Value must be a valid semver version!'
+						: 'Please provide a value.',
 			});
 		}
 	}
@@ -101,14 +101,24 @@ export default async function (version: ReleaseType | string | undefined) {
 	) {
 		try {
 			const hash = JSON.parse(
-				(await shell('git', ['log', '-n', '1', '--pretty=format:"%H"']).then(
-					(result) => result.stdout,
-				)) || '""',
+				(await shell('git', [
+					'log',
+					'-n',
+					'1',
+					'--pretty=format:"%H"',
+				]).then((result) => result.stdout)) || '""',
 			);
 
 			if (!hash) log.error('No commit hash found!');
 
-			await shell('git', ['tag', '-a', `v${json.version}`, hash, '-m', '""']);
+			await shell('git', [
+				'tag',
+				'-a',
+				`v${json.version}`,
+				hash,
+				'-m',
+				'""',
+			]);
 		} catch {
 			log.error('Something went wrong while creating the tag.');
 		}
