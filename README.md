@@ -1,9 +1,9 @@
 # banben
 
-A better `npm version`. This tool is exactly what I want in a version-bumping tool, nothing more and nothing less. You probably shouldn't use this! Check out https://github.com/fabiospampinato/bump for something more configurable.
+A better `npm version`. This tool is exactly what I want in a version-bumping tool, nothing more and nothing less. You probably shouldn't use this! Check out [fabiospampinato/bump](https://github.com/fabiospampinato/bump) for something more configurable.
 
 > [!TIP]
-> The word "banben" comes from the Chinese word `版本` (bǎnběn), meaning "version".
+> The word "banben" comes from the Chinese word `版本` (bǎnběn), meaning "version"!
 
 ## Installation
 
