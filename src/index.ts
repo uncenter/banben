@@ -12,6 +12,8 @@ export default async function (version: ReleaseType | string | undefined) {
 	const pkg = new Package(resolve('./package.json'));
 	const json = await pkg.read();
 
+	log.info(`Current version is ${json.version}.`);
+
 	if (version === undefined) {
 		version = await select({
 			message: 'Select a version increment:',
