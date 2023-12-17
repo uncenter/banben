@@ -1,11 +1,12 @@
-import { execa as shell } from 'execa';
+import type { ReleaseType } from 'semver';
+
 import { resolve } from 'node:path';
-import { log } from './utils';
 
+import { execa as shell } from 'execa';
 import { select, string, toggle } from 'prask';
-import { inc, parse, valid, type ReleaseType } from 'semver';
+import { inc, parse, valid } from 'semver';
 
-import { Package } from './utils';
+import { log, Package } from './utils';
 
 export default async function (version: ReleaseType | string | undefined) {
 	const pkg = new Package(resolve('./package.json'));

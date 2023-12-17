@@ -1,8 +1,9 @@
-import detectIndent, { type Indent } from 'detect-indent';
+import type { JsonObject } from './types';
+import type { Indent } from 'detect-indent';
+
 import { readFile, stat, writeFile } from 'node:fs/promises';
 
-import type { JsonObject } from './types';
-
+import detectIndent from 'detect-indent';
 import { Logger } from 'loogu';
 
 export const log = new Logger('', {

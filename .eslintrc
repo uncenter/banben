@@ -38,7 +38,8 @@
 		"unicorn/no-useless-undefined": ["error", { "checkArguments": false }],
 		"unicorn/text-encoding-identifier-case": "off",
 		"unicorn/filename-case": "off",
-		"unicorn/numeric-separators-style": "off"
+		"unicorn/numeric-separators-style": "off",
+		"unicorn/prevent-abbreviations": "off"
 	},
 	"overrides": [
 		{

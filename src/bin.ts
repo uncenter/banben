@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import bin from 'tiny-bin';
+
 import bump from '.';
 
 bin('banben', 'A better `npm version`.')
