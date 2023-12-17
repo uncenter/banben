@@ -59,6 +59,17 @@ export default async function (version: ReleaseType | string | undefined) {
 		log.error(`Invalid version ${JSON.stringify(version)}.`);
 	}
 
+	try {
+		const status = await shell('git', ['status', '-s']);
+		if (status.stdout !== '' && status.stdout.split('\n').length > 0) {
+			log.error(
+				'Changed files detected. Please commit any staged/unstaged changed files before running `banben`.',
+			);
+		}
+	} catch {
+		log.error('Something went wrong while checking for changed files.');
+	}
+
 	if (
 		await toggle({
 			message: `Write version '${json.version}' to package.json?`,
