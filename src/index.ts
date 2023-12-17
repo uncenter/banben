@@ -1,6 +1,6 @@
 import { execa as shell } from 'execa';
 import { resolve } from 'node:path';
-import { log } from './bin';
+import { log } from './utils';
 
 import { select, string, toggle } from 'prask';
 import { inc, parse, valid, type ReleaseType } from 'semver';

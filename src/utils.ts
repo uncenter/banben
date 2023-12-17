@@ -1,9 +1,15 @@
 import detectIndent, { type Indent } from 'detect-indent';
 import { readFile, stat, writeFile } from 'node:fs/promises';
-import { log } from './bin';
+
 import type { JsonObject } from './types';
 
-export async function exists(path) {
+import { Logger } from 'loogu';
+
+export const log = new Logger('', {
+	throwError: false,
+});
+
+export async function exists(path: string) {
 	try {
 		await stat(path);
 		return true;
