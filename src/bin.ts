@@ -1,13 +1,32 @@
 #!/usr/bin/env node
 
-import bin from 'tiny-bin';
+import { defineCommand, runMain } from 'citty';
+
+import {
+	name,
+	version,
+	description,
+} from '../package.json' assert { type: 'json' };
 
 import bump from '.';
 
-bin('banben', 'A better `npm version`.')
-	.argument(
-		'[<version> | major | minor | patch | premajor | preminor | prepatch | prerelease]',
-		'',
-	)
-	.action((options, args) => bump(args[0]))
-	.run();
+const main = defineCommand({
+	meta: {
+		name: name,
+		version: version,
+		description: description,
+	},
+	args: {
+		version: {
+			type: 'positional',
+			description:
+				'[<version> | major | minor | patch | premajor | preminor | prepatch | prerelease]',
+			required: false,
+		},
+	},
+	async run({ args }) {
+		await bump(args.version);
+	},
+});
+
+runMain(main);

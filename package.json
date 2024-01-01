@@ -20,12 +20,12 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
+		"citty": "^0.1.5",
 		"detect-indent": "^7.0.1",
 		"execa": "^8.0.1",
 		"loogu": "^0.3.0",
-		"prask": "^2.0.0",
-		"semver": "^7.5.4",
-		"tiny-bin": "^1.7.0"
+		"prask": "^2.1.0",
+		"semver": "^7.5.4"
 	},
 	"devDependencies": {
 		"@types/node": "^20.10.6",
