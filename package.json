@@ -23,6 +23,7 @@
 		"citty": "^0.1.5",
 		"detect-indent": "^7.0.1",
 		"execa": "^8.0.1",
+		"kleur": "^4.1.5",
 		"loogu": "^0.3.0",
 		"prask": "^2.1.0",
 		"semver": "^7.5.4"

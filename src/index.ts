@@ -3,6 +3,7 @@ import type { ReleaseType } from 'semver';
 import { resolve } from 'node:path';
 
 import { execa as shell } from 'execa';
+import { cyan, magenta } from 'kleur/colors';
 import { select, string, toggle } from 'prask';
 import { inc, parse, valid } from 'semver';
 
@@ -12,9 +13,60 @@ export default async function (version: ReleaseType | string | undefined) {
 	const pkg = new Package(resolve('./package.json'));
 	const json = await pkg.read();
 
+	try {
+		await shell('git', ['rev-parse', '--is-inside-work-tree']);
+	} catch {
+		log.error('Not in a Git repository.');
+	}
+
+	const currentBranch = await shell('git', ['branch', '--show-current']).then(
+		(result) => result.stdout,
+	);
+
+	const remoteOrigin = (await shell('git', ['remote', 'show', 'origin']).then(
+		(result) => result.stdout,
+		() => false,
+	)) as string | false;
+
+	if (remoteOrigin) {
+		const defaultBranch = remoteOrigin
+			.split('\n')
+			.find((line) => line.includes('HEAD branch'))
+			.split(' ')[4];
+
+		if (
+			currentBranch !== defaultBranch &&
+			!(await toggle({
+				message: `The default branch at remote ${magenta(
+					'origin',
+				)} is ${cyan(defaultBranch)}, but you are on ${cyan(
+					currentBranch,
+				)}. Would you like to proceed on branch ${cyan(
+					currentBranch,
+				)} anyway?`,
+			}))
+		) {
+			log.error('Operation cancelled.');
+		}
+	} else {
+		log.error('Remote origin does not exist. Operation cancelled.');
+	}
+
 	log.info(`Current version is ${json.version}.`);
 
-	if (version === undefined) {
+	if (json.version === undefined) {
+		json.version =
+			version ||
+			(await string({
+				message: 'No version set. Enter an initial version number:',
+				validate: (value) =>
+					value
+						? valid(value)
+							? true
+							: 'Value must be a valid semver version!'
+						: 'Please provide a value.',
+			}));
+	} else if (version === undefined) {
 		version = await select({
 			message: 'Select a version increment:',
 			options: [
@@ -39,10 +91,8 @@ export default async function (version: ReleaseType | string | undefined) {
 						: 'Please provide a value.',
 			});
 		}
-	}
 
-	if (
-		[
+		json.version = [
 			'major',
 			'premajor',
 			'minor',
@@ -51,12 +101,8 @@ export default async function (version: ReleaseType | string | undefined) {
 			'prepatch',
 			'prerelease',
 		].includes(version)
-	) {
-		json.version = inc(json.version as string, version as ReleaseType);
-	} else if (valid(version)) {
-		json.version = parse(version).version;
-	} else {
-		log.error(`Invalid version ${JSON.stringify(version)}.`);
+			? inc(json.version as string, version as ReleaseType)
+			: parse(version).version;
 	}
 
 	try {
@@ -139,8 +185,22 @@ export default async function (version: ReleaseType | string | undefined) {
 		log.error('Tag creation cancelled.');
 	}
 
-	log.info('Next steps:');
-	console.log(
-		`\n  - git push <remote> <branch>\n  - git push <remote> v${json.version}`,
-	);
+	if (
+		await toggle({
+			message: `Push version tag and commit to ${magenta(
+				'origin',
+			)}/${cyan(currentBranch)}?`,
+			initial: false,
+		})
+	) {
+		try {
+			await shell('git', ['push', 'origin', 'v' + json.version]);
+			await shell('git', ['push', 'origin', currentBranch]);
+		} catch {
+			log.error('Something went wrong while pushing the tag and commit.');
+		}
+		log.success('Tag and commit pushed.');
+	} else {
+		log.error('Tag and commit push cancelled.');
+	}
 }
