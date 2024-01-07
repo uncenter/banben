@@ -23,8 +23,9 @@ banben [<version> | major | minor | patch | premajor | preminor | prepatch | pre
 Banben runs through three steps, and prompts you along the way to confirm each action:
 
 1. Write the version to the package.json.
-2. Make a commit for the version (message defaults to the version).
+2. Make a commit for the version (message defaults to the `v${version}`).
 3. Create a version tag.
+4. Push the version tag and commit.
 
 ## License
 
