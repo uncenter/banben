@@ -167,7 +167,7 @@ export default async function (version: ReleaseType | string | undefined) {
 				]).then((result) => result.stdout)) || '""',
 			);
 
-			if (!hash) log.error('No commit hash found!');
+			if (!hash) log.error('No commit hash found.');
 
 			await shell('git', [
 				'tag',
@@ -189,7 +189,7 @@ export default async function (version: ReleaseType | string | undefined) {
 		await toggle({
 			message: `Push version tag and commit to ${magenta(
 				'origin',
-			)}/${cyan(currentBranch)}?`,
+			)} / ${cyan(currentBranch)}?`,
 			initial: false,
 		})
 	) {
