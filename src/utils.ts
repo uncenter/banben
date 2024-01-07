@@ -32,12 +32,22 @@ export class Package {
 	async read() {
 		if (this.json) return this.json;
 
-		if (!(await exists(this.path))) log.error('No package.json found!');
+		if (!(await exists(this.path)))
+			log.error(`No package.json found in ${process.cwd()}.`);
 		const file = await readFile(this.path, 'utf-8');
+
+		try {
+			this.json = JSON.parse(file);
+		} catch {
+			log.error('Failed to parse package.json.');
+		}
+
+		if (typeof this.json !== 'object') {
+			log.error('Package.json is not an object.');
+		}
 
 		this.indent = detectIndent(file).indent;
 		this.eofChar = (file.match(/\r?\n$/) || [])[0] || '';
-		this.json = JSON.parse(file);
 		return this.json;
 	}
 
