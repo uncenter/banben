@@ -1,6 +1,6 @@
 {
 	"name": "banben",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "A better `npm version`.",
 	"author": "uncenter <hi@uncenter.dev>",
 	"repository": "uncenter/banben",
