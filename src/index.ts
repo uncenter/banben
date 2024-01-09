@@ -19,6 +19,17 @@ export default async function (version: ReleaseType | string | undefined) {
 		log.error('Not in a Git repository.');
 	}
 
+	try {
+		const status = await shell('git', ['status', '-s']);
+		if (status.stdout !== '' && status.stdout.split('\n').length > 0) {
+			log.error(
+				'Changed files detected. Please commit or stash any staged/unstaged changed files first.',
+			);
+		}
+	} catch {
+		log.error('Something went wrong while checking for changed files.');
+	}
+
 	const currentBranch = await shell('git', ['branch', '--show-current']).then(
 		(result) => result.stdout,
 	);
@@ -103,17 +114,6 @@ export default async function (version: ReleaseType | string | undefined) {
 		].includes(version)
 			? inc(json.version as string, version as ReleaseType)
 			: parse(version).version;
-	}
-
-	try {
-		const status = await shell('git', ['status', '-s']);
-		if (status.stdout !== '' && status.stdout.split('\n').length > 0) {
-			log.error(
-				'Changed files detected. Please commit any staged/unstaged changed files before running `banben`.',
-			);
-		}
-	} catch {
-		log.error('Something went wrong while checking for changed files.');
 	}
 
 	if (
