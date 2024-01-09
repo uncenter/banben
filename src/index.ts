@@ -190,7 +190,7 @@ export default async function (version: ReleaseType | string | undefined) {
 			message: `Push version tag and commit to ${magenta(
 				'origin',
 			)} / ${cyan(currentBranch)}?`,
-			initial: false,
+			initial: true,
 		})
 	) {
 		try {
